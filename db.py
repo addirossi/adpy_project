@@ -1,7 +1,16 @@
+from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
 from models import *
+
+
+load_dotenv()
+
+
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_NAME = os.getenv('DB_NAME')
 
 
 class DB:
@@ -64,3 +73,10 @@ class DB:
 
     def get_blacklist(self, user_id):
         return self.session.query(SearchResult).filter(SearchResult.user_id == user_id, SearchResult.blacklisted == True).all()
+
+
+if __name__ == '__main__':
+    db_url = f'postgresql://{DB_NAME}:{DB_PASSWORD}@localhost:5432/{DB_NAME}'
+    db = DB(db_url)
+    db.create_db()
+    db.create_tables()
